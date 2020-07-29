@@ -2,8 +2,7 @@ import express from 'express';
 import { createConnection, Connection } from 'typeorm';
 import {InversifyExpressServer} from "inversify-express-utils";
 import {Container} from "inversify";
-import "./services/products/ProductsController";
-import {ProductEntity} from "../repositories/mappers";
+import {OrderEntity, ProductEntity} from "../repositories/mappers";
 import {containerConfigurator} from "../inversify.config";
 
 class App {
@@ -28,7 +27,7 @@ class App {
             database:"database.sqlite",
             logging: true,
             synchronize: true,
-            entities: [ProductEntity],
+            entities: [ProductEntity, OrderEntity],
             migrations: ['../repositories/migrations/*.ts']
         });
         if (connection === undefined) { throw new Error('Error connecting to database'); } // In case the connection failed, the app stops.

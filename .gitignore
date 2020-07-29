@@ -2,3 +2,4 @@
 *.sqlite
 dist/*
 node_modules/*
+coverage/*

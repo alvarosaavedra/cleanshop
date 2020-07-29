@@ -1,6 +1,6 @@
 import { inject } from "inversify";
-import {ProductUseCasesInterface} from "../../../interfaces";
-import { TYPES } from "../../../interfaces/types";
+import {ProductUseCasesInterface} from "../../interfaces";
+import { TYPES } from "../../interfaces/types";
 import {interfaces, controller, httpGet} from "inversify-express-utils";
 
 @controller("/api/v1/products")
