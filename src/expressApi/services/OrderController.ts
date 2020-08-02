@@ -42,4 +42,10 @@ export class OrderController implements interfaces.Controller {
             return res.status(400).json({error: e.message})
         }
     }
+
+    @httpPost("/:id/pay")
+    public async pay(
+        @requestParam("id") id: number, @request() req: express.Request, @response() res: express.Response){
+        res.status(400).json({error: "Orden no encontrada"})
+    }
 }

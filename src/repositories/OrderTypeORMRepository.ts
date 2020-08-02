@@ -1,9 +1,9 @@
 import {injectable} from "inversify";
-import {OrderRepositoryInterface} from "../interfaces";
 import {Product} from "../Entities/Product";
 import {Order} from "../Entities/Order";
 import {getRepository} from "typeorm";
 import {OrderEntity} from "./mappers";
+import {OrderRepositoryInterface} from "../interfaces/OrderRepositoryInterface";
 
 @injectable()
 export class OrderTypeORMRepository implements OrderRepositoryInterface {

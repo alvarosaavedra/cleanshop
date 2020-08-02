@@ -1,6 +1,5 @@
 import { Container } from "inversify";
 import {
-    OrderRepositoryInterface,
     OrderUseCasesInterface,
     ProductRepositoryInterface,
     ProductUseCasesInterface
@@ -13,6 +12,7 @@ import {OrderController} from "./expressApi/services/OrderController";
 import {ProductsUseCases} from "./UseCases/ProductUseCases";
 import {ProductTypeORMRepository} from "./repositories/ProductTypeORMRepository";
 import {OrderTypeORMRepository} from "./repositories/OrderTypeORMRepository";
+import {OrderRepositoryInterface} from "./interfaces/OrderRepositoryInterface";
 
 const containerConfigurator = (container: Container): Container => {
     container.bind<ProductRepositoryInterface>(TYPES.ProductRepositoryInterface).to(ProductTypeORMRepository);

@@ -19,10 +19,6 @@ export interface OrderUseCasesInterface {
     getById(id: number): Promise<Order>
     createOrder(idProductList: number[]): Promise<Order>
     updateOrder(id: number, addProductList: number[], removeProductList: number[]): Promise<Order>
+    pay(id: number, payMethod: string): Promise<Order>
 }
 
-export interface OrderRepositoryInterface {
-    getById(id: number): Promise<Order>
-    create(productList: Product[]): Promise<Order>
-    update(order: Order): Promise<Order>
-}
