@@ -22,3 +22,7 @@ export interface OrderUseCasesInterface {
     pay(id: number, payMethod: string): Promise<Order>
 }
 
+export interface PaymentProcessorInterface {
+
+}
+

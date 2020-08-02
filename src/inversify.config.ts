@@ -1,6 +1,6 @@
-import { Container } from "inversify";
+import {Container, interfaces as inversifyInterfaces } from "inversify";
 import {
-    OrderUseCasesInterface,
+    OrderUseCasesInterface, PaymentProcessorInterface,
     ProductRepositoryInterface,
     ProductUseCasesInterface
 } from "./interfaces";
@@ -21,6 +21,13 @@ const containerConfigurator = (container: Container): Container => {
     container.bind<OrderUseCasesInterface>(TYPES.OrderUseCasesInterface).to(OrderUseCases);
     container.bind<interfaces.Controller>('ProductsController').to(ProductsController)
     container.bind<interfaces.Controller>('OrderController').to(OrderController)
+    container.bind<inversifyInterfaces.Factory<PaymentProcessorInterface>>(
+        "Factory<PaymentProcessorInterface>")
+        .toFactory<PaymentProcessorInterface>((context: inversifyInterfaces.Context) => {
+        return (paymentMethod: string) => {
+            throw Error("Metodo de pago invalido")
+        };
+    });
     return container
 }
 

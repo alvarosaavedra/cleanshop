@@ -3,7 +3,6 @@ import { createConnection, Connection } from 'typeorm';
 import {InversifyExpressServer} from "inversify-express-utils";
 import {Container} from "inversify";
 import {OrderEntity, ProductEntity} from "../repositories/mappers";
-import {containerConfigurator} from "../inversify.config";
 
 class App {
     public server: InversifyExpressServer;
@@ -11,9 +10,11 @@ class App {
     public connection: Connection | undefined; // TypeORM connection to the database
 
     // The constructor receives an array with instances of the controllers for the application and an integer to designate the port number.
-    constructor(port: number) {
+    constructor(port: number, configurators: {(container: Container): Container}[]) {
         let container = new Container();
-        container = containerConfigurator(container);
+        for (let configuration of configurators) {
+            container = configuration(container);
+        }
         this.server = new InversifyExpressServer(container);
         this.port = port;
         this.initializeModels();
@@ -43,13 +44,16 @@ class App {
         });
     }
 
-
     // Boots the application
     public listen() {
         let app = this.server.build();
         app.listen(this.port, () => {
             console.log(`Server running on port ${this.port}`);
         });
+    }
+
+    public  address(){
+        return this.port
     }
 }
 

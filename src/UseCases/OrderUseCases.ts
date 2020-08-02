@@ -1,4 +1,4 @@
-import {OrderUseCasesInterface, ProductRepositoryInterface} from "../interfaces";
+import {OrderUseCasesInterface, PaymentProcessorInterface, ProductRepositoryInterface} from "../interfaces";
 import {inject, injectable} from "inversify";
 import {TYPES} from "../interfaces/types";
 import {Order} from "../Entities/Order";
@@ -9,7 +9,8 @@ export class OrderUseCases implements OrderUseCasesInterface {
     public constructor(
         @inject(TYPES.OrderRepositoryInterface) private orderRepository: OrderRepositoryInterface,
         @inject(TYPES.ProductRepositoryInterface) private productRepository: ProductRepositoryInterface,
-        private paymentProcessorFactory: any,
+        @inject("Factory<PaymentProcessorInterface>") private paymentProcessorFactory:
+            (paymentMethod: string)=> PaymentProcessorInterface,
     ) {}
     async getById(id: number): Promise<Order> {
         return this.orderRepository.getById(id);
