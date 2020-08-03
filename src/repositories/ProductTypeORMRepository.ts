@@ -2,7 +2,7 @@ import {injectable} from "inversify";
 import {ProductRepositoryInterface} from "../interfaces";
 import {Product} from "../Entities/Product";
 import {getRepository} from "typeorm";
-import {ProductEntity} from "./mappers";
+import {ProductEntity} from "./mappers/ProductEntity";
 
 @injectable()
 export class ProductTypeORMRepository implements ProductRepositoryInterface {

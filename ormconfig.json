@@ -4,10 +4,10 @@
   "synchronize": true,
   "logging": true,
   "entities": [
-    "src/repositories/mappers/*.ts"
+    "dist/src/repositories/mappers/*.js"
   ],
   "migrations": [
-    "src/repositories/migrations/*.ts"
+    "dist/src/repositories/migrations/*.js"
   ],
   "subscribers": [
     "src/subscriber/**/*.ts"

@@ -2,7 +2,6 @@ import express from 'express';
 import { createConnection, Connection } from 'typeorm';
 import {InversifyExpressServer} from "inversify-express-utils";
 import {Container} from "inversify";
-import {OrderEntity, ProductEntity} from "../repositories/mappers";
 
 class App {
     public server: InversifyExpressServer;
@@ -22,15 +21,7 @@ class App {
     }
 
     private async initializeModels() {
-        const connection = await createConnection({
-            name: 'default',
-            type: "sqlite",
-            database:"database.sqlite",
-            logging: true,
-            synchronize: true,
-            entities: [ProductEntity, OrderEntity],
-            migrations: ['../repositories/migrations/*.ts']
-        });
+        const connection = await createConnection();
         if (connection === undefined) { throw new Error('Error connecting to database'); } // In case the connection failed, the app stops.
         connection.synchronize(); // this updates the database schema to match the models' definitions
         this.connection = connection; // Store the connection object in the class instance.

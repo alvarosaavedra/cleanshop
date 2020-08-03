@@ -2,7 +2,7 @@ import {injectable} from "inversify";
 import {Product} from "../Entities/Product";
 import {Order} from "../Entities/Order";
 import {getRepository} from "typeorm";
-import {OrderEntity} from "./mappers";
+import {OrderEntity} from "./mappers/OrderEntity";
 import {OrderRepositoryInterface} from "../interfaces/OrderRepositoryInterface";
 
 @injectable()

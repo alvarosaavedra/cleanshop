@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsc-watch --onSuccess \"node ./dist/src/expressApi/server.js\"",
+    "dev": "tsc-watch --onSuccess \"node ./dist/src/server.js\"",
     "test": "jest --coverage",
     "test:watch": "jest --watch --coverage --verbose",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js"

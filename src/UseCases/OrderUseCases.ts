@@ -30,7 +30,7 @@ export class OrderUseCases implements OrderUseCasesInterface {
     }
 
     async pay(id: number, payMethod: string): Promise<Order> {
-        const order = this.orderRepository.getById(id)
+        const order = await this.orderRepository.getById(id)
         const paymentProcessor = this.paymentProcessorFactory(payMethod);
         return order;
     }

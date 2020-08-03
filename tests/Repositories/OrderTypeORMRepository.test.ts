@@ -1,6 +1,7 @@
 import {createConnection} from "typeorm";
-import {OrderEntity, ProductEntity} from "../../src/repositories/mappers";
+import {OrderEntity} from "../../src/repositories/mappers/OrderEntity";
 import {OrderTypeORMRepository} from "../../src/repositories/OrderTypeORMRepository";
+import {ProductEntity} from "../../src/repositories/mappers/ProductEntity";
 
 describe("OrderTypeORMRepository", ()=> {
     it("Should return a Order that has total", async()=> {
