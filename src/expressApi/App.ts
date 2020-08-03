@@ -9,14 +9,14 @@ class App {
     public connection: Connection | undefined; // TypeORM connection to the database
 
     // The constructor receives an array with instances of the controllers for the application and an integer to designate the port number.
-    constructor(port: number, configurators: {(container: Container): Container}[]) {
+    constructor(port: number, configurators: {(container: Container): Container}[], createModels: boolean = true) {
         let container = new Container();
         for (let configuration of configurators) {
             container = configuration(container);
         }
         this.server = new InversifyExpressServer(container);
         this.port = port;
-        this.initializeModels();
+        if(createModels){this.initializeModels();}
         this.initializeMiddlewares();
     }
 

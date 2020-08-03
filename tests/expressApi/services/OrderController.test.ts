@@ -6,22 +6,94 @@ import {OrderController} from "../../../src/expressApi/services/OrderController"
 import {OrderUseCasesInterface} from "../../../src/interfaces";
 import {TYPES} from "../../../src/interfaces/types";
 import {mock} from "jest-mock-extended";
+import {EntityNotFoundError} from "../../../src/repositories/Errors";
 import {Order} from "../../../src/Entities/Order";
+
+function config() {
+    const mockOrderUseCase = mock<OrderUseCasesInterface>()
+    const configuration = (container: Container) => {
+        container.bind<interfaces.Controller>('OrderController').to(OrderController)
+        container.bind<OrderUseCasesInterface>(TYPES.OrderUseCasesInterface).toConstantValue(mockOrderUseCase);
+        return container
+    }
+    const app = new App(3001, [configuration], false)
+    return {mockOrderUseCase, app};
+}
 
 describe("OrderController", ()=>{
     describe("GET /api/v1/orders/:id", ()=>{
-        it("should return 404 if order don't exists", async ()=>{
-            const mockOrderUseCase = mock<OrderUseCasesInterface>()
-            const configuration = (container: Container) => {
-                container.bind<interfaces.Controller>('OrderController').to(OrderController)
-                container.bind<OrderUseCasesInterface>(TYPES.OrderUseCasesInterface).toConstantValue(mockOrderUseCase);
-                return container
-            }
-            const app = new App(3001, [configuration])
-            mockOrderUseCase.getById.mockReturnValue(new Promise<Order>((resolve, reject) => new Order(1, [])))
-            request(app)
+        it("should return 404 if order don't exists", (done)=>{
+            const {mockOrderUseCase, app} = config();
+            mockOrderUseCase.getById.mockRejectedValue(new EntityNotFoundError("Order no existe"))
+            request(app.server.build())
                 .get('/api/v1/orders/1')
                 .expect(404)
+                .end(function(err, res) {
+                    if (err) throw err;
+                    expect(res.body).toHaveProperty("error")
+                    expect(res.body.error).toBe("Order don't exists")
+
+                    done()
+                });
+        })
+
+        it("should return a json representation of a Order including products and total", 
+            (done) => {
+                const {mockOrderUseCase, app} = config();
+                mockOrderUseCase.getById.mockResolvedValue(new Order(1, []));
+                request(app.server.build())
+                    .get('/api/v1/orders/1')
+                    .expect(200)
+                    .end(function(err, res) {
+                        if (err) throw err;
+                        expect(res.body).toHaveProperty("total")
+                        expect(res.body).toHaveProperty("productos")
+                        done()
+                    });
+
+        })
+    })
+    describe("POST /", ()=>{
+        it("Should return 400 if productList is not sent", (done)=>{
+            const {app} = config();
+            request(app.server.build())
+                .post('/api/v1/orders')
+                .send({
+                })
+                .expect(400)
+                .end(function(err, res) {
+                    if (err) throw err;
+                    expect(res.body).toHaveProperty("error")
+                    done()
+                });
+        })
+        it("Should return 404 if any of products don't exists", (done)=>{
+            const {mockOrderUseCase, app} = config();
+            mockOrderUseCase.createOrder.mockRejectedValue(new EntityNotFoundError("One of the products don't exists"))
+            request(app.server.build())
+                .post('/api/v1/orders')
+                .send({
+                    productList: []
+                })
+                .expect(404)
+                .end(function(err, res) {
+                    if (err) throw err;
+                    expect(res.body).toHaveProperty("error")
+                    done()
+                });
+        })
+        it("Should return 201 if all OK", (done)=>{
+            const {app} = config();
+            request(app.server.build())
+                .post('/api/v1/orders')
+                .send({
+                    productList: []
+                })
+                .expect(201)
+                .end(function(err, res) {
+                    if (err) throw err;
+                    done()
+                });
         })
     })
 })
