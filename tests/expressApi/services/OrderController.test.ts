@@ -16,7 +16,7 @@ function config() {
         container.bind<OrderUseCasesInterface>(TYPES.OrderUseCasesInterface).toConstantValue(mockOrderUseCase);
         return container
     }
-    const app = new App(3001, [configuration], false)
+    const app = new App(3001, [configuration], false).server.build()
     return {mockOrderUseCase, app};
 }
 
@@ -25,7 +25,7 @@ describe("OrderController", ()=>{
         it("should return 404 if order don't exists", (done)=>{
             const {mockOrderUseCase, app} = config();
             mockOrderUseCase.getById.mockRejectedValue(new EntityNotFoundError("Order no existe"))
-            request(app.server.build())
+            request(app)
                 .get('/api/v1/orders/1')
                 .expect(404)
                 .end(function(err, res) {
@@ -41,7 +41,7 @@ describe("OrderController", ()=>{
             (done) => {
                 const {mockOrderUseCase, app} = config();
                 mockOrderUseCase.getById.mockResolvedValue(new Order(1, []));
-                request(app.server.build())
+                request(app)
                     .get('/api/v1/orders/1')
                     .expect(200)
                     .end(function(err, res) {
@@ -53,10 +53,10 @@ describe("OrderController", ()=>{
 
         })
     })
-    describe("POST /", ()=>{
+    describe("POST /api/v1/orders", ()=>{
         it("Should return 400 if productList is not sent", (done)=>{
             const {app} = config();
-            request(app.server.build())
+            request(app)
                 .post('/api/v1/orders')
                 .send({
                 })
@@ -70,7 +70,7 @@ describe("OrderController", ()=>{
         it("Should return 404 if any of products don't exists", (done)=>{
             const {mockOrderUseCase, app} = config();
             mockOrderUseCase.createOrder.mockRejectedValue(new EntityNotFoundError("One of the products don't exists"))
-            request(app.server.build())
+            request(app)
                 .post('/api/v1/orders')
                 .send({
                     productList: []
@@ -84,7 +84,7 @@ describe("OrderController", ()=>{
         })
         it("Should return 201 if all OK", (done)=>{
             const {app} = config();
-            request(app.server.build())
+            request(app)
                 .post('/api/v1/orders')
                 .send({
                     productList: []
