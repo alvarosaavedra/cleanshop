@@ -5,6 +5,7 @@ import {TYPES} from "../../interfaces/types";
 import {OrderUseCasesInterface} from "../../interfaces";
 import {Order} from "../../Entities/Order";
 import {EntityNotFoundError} from "../../repositories/Errors";
+import {NotImplemented} from "../../UseCases/inversify.config";
 
 @controller("/api/v1/orders")
 export class OrderController implements interfaces.Controller {
@@ -45,13 +46,29 @@ export class OrderController implements interfaces.Controller {
             await this.orderUseCases.updateOrder(id, addProductList, removeProductList)
             return res.sendStatus(201)
         }catch (e) {
-            return res.status(400).json({error: e.message})
+            if (e instanceof EntityNotFoundError){
+                return res.status(404).json({error: e.message})
+            }
+            return res.status(500).json({error: e.message})
         }
     }
 
     @httpPost("/:id/pay")
     public async pay(
         @requestParam("id") id: number, @request() req: express.Request, @response() res: express.Response){
-        res.status(400).json({error: "Orden no encontrada"})
+        if (!req.body.paymentProvider) {res.status(400).json({error: "paymentProvider required"})}
+        try{
+            await this.orderUseCases.pay(id, req.body.paymentProvider)
+            res.sendStatus(201)
+        } catch (e) {
+            if (e instanceof EntityNotFoundError){
+                return res.status(404).json({error: e.message})
+            }
+            if (e instanceof NotImplemented){
+                return res.status(404).json({error: e.message})
+            }
+            return res.status(500).json(e)
+        }
     }
+
 }
