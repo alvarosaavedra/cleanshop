@@ -21,7 +21,7 @@ export class OrderUseCases implements OrderUseCasesInterface {
         return this.orderRepository.create(productList);
     }
 
-    async updateOrder(id: number, addProductList: [], removeProductList: number[]): Promise<Order> {
+    async updateOrder(id: number, addProductList: number[], removeProductList: number[]): Promise<Order> {
         const order = await this.orderRepository.getById(id);
         order.productos = order.productos.filter((producto) => !removeProductList.includes(producto.id) )
         const newProductList = await Promise.all(addProductList.map((id) => this.productRepository.getById(id)))
@@ -34,5 +34,4 @@ export class OrderUseCases implements OrderUseCasesInterface {
         const paymentProcessor = this.paymentProcessorFactory(payMethod);
         return order;
     }
-
 }

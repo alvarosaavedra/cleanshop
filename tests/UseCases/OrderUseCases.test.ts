@@ -57,6 +57,44 @@ describe("OrderUseCase", ()=> {
         })
     })
 
+    describe("updateOrder", ()=>{
+        it("Should throw EntityNotFoundError if any of the products on the add list don't exists", async ()=> {
+            const {mockOrderRepo, mockProductRepo, mockProcessorsFactory} = config();
+            mockOrderRepo.getById.mockResolvedValue({id: 1, productos: [], total: 0})
+            mockProductRepo.getById.mockRejectedValue(new EntityNotFoundError("Product don't exists"))
+
+            const useCase = new OrderUseCases(mockOrderRepo, mockProductRepo, mockProcessorsFactory);
+            await expect(useCase.updateOrder(1,[1], [])).rejects.toThrowError(
+                new EntityNotFoundError("Product don't exists"))
+        })
+
+        it("Should call orderRepository.update using a updated order", async ()=> {
+            const {mockOrderRepo, mockProductRepo, mockProcessorsFactory} = config();
+            mockOrderRepo.getById.mockResolvedValue({
+                id: 1,
+                productos: [
+                    {id: 2, nombre: "Toy", precio: 10000, costo: 5000, margen(): number { return 5000 }},
+                ],
+                total: 10000
+            })
+
+            const mockProductExpected = {
+                id:1, nombre: "Jabon", precio: 2000, costo: 500, margen(): number { return 1500}}
+
+            mockProductRepo.getById.mockResolvedValue(mockProductExpected)
+            const useCase = new OrderUseCases(mockOrderRepo, mockProductRepo, mockProcessorsFactory);
+            await useCase.updateOrder(1, [1], [2])
+
+            const expectedOrder = {
+                id: 1,
+                productos: [mockProductExpected],
+                total: 10000
+            }
+
+            expect(mockOrderRepo.update).toBeCalledWith(expectedOrder)
+        })
+    })
+
     describe("pay",() => {
         it("should throw a error if the order don't exists", async () => {
             const {mockOrderRepo, mockProductRepo, mockProcessorsFactory} = config();
