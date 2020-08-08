@@ -23,6 +23,6 @@ export interface OrderUseCasesInterface {
 }
 
 export interface PaymentProcessorInterface {
-
+    process(orden: Order): Promise<Order>
 }
 
